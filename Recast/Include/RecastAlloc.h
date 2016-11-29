@@ -68,8 +68,8 @@ class rcIntArray
 	void doResize(int n);
 	
 	// Explicitly disabled copy constructor and copy assignment operator.
-	rcIntArray(const rcIntArray&);
-	rcIntArray& operator=(const rcIntArray&);
+	rcIntArray(const rcIntArray&) = delete;
+	rcIntArray& operator=(const rcIntArray&) = delete;
 
 public:
 	/// Constructs an instance with an initial array size of zero.
@@ -139,8 +139,8 @@ public:
 	
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	rcScopedDelete(const rcScopedDelete&);
-	rcScopedDelete& operator=(const rcScopedDelete&);
+	rcScopedDelete(const rcScopedDelete&) = delete;
+	rcScopedDelete& operator=(const rcScopedDelete&) = delete;
 };
 
 #endif

@@ -59,8 +59,8 @@ public:
 
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	dtLocalBoundary(const dtLocalBoundary&);
-	dtLocalBoundary& operator=(const dtLocalBoundary&);
+	dtLocalBoundary(const dtLocalBoundary&) = delete;
+	dtLocalBoundary& operator=(const dtLocalBoundary&) = delete;
 };
 
 #endif // DETOURLOCALBOUNDARY_H

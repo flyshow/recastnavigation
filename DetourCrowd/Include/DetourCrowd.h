@@ -346,8 +346,8 @@ public:
 
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	dtCrowd(const dtCrowd&);
-	dtCrowd& operator=(const dtCrowd&);
+	dtCrowd(const dtCrowd&) = delete;
+	dtCrowd& operator=(const dtCrowd&) = delete;
 };
 
 /// Allocates a crowd object using the Detour allocator.

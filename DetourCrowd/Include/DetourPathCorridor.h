@@ -135,8 +135,8 @@ public:
 
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	dtPathCorridor(const dtPathCorridor&);
-	dtPathCorridor& operator=(const dtPathCorridor&);
+	dtPathCorridor(const dtPathCorridor&) = delete;
+	dtPathCorridor& operator=(const dtPathCorridor&) = delete;
 };
 
 int dtMergeCorridorStartMoved(dtPolyRef* path, const int npath, const int maxPath,

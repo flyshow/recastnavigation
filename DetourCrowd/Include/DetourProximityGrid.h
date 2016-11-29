@@ -62,8 +62,8 @@ public:
 
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	dtProximityGrid(const dtProximityGrid&);
-	dtProximityGrid& operator=(const dtProximityGrid&);
+	dtProximityGrid(const dtProximityGrid&) = delete;
+	dtProximityGrid& operator=(const dtProximityGrid&) = delete;
 };
 
 dtProximityGrid* dtAllocProximityGrid();

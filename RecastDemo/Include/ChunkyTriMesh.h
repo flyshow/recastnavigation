@@ -40,8 +40,8 @@ struct rcChunkyTriMesh
 
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	rcChunkyTriMesh(const rcChunkyTriMesh&);
-	rcChunkyTriMesh& operator=(const rcChunkyTriMesh&);
+	rcChunkyTriMesh(const rcChunkyTriMesh&) = delete;
+	rcChunkyTriMesh& operator=(const rcChunkyTriMesh&) = delete;
 };
 
 /// Creates partitioned triangle mesh (AABB tree),

@@ -59,8 +59,8 @@ public:
 
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	dtObstacleAvoidanceDebugData(const dtObstacleAvoidanceDebugData&);
-	dtObstacleAvoidanceDebugData& operator=(const dtObstacleAvoidanceDebugData&);
+	dtObstacleAvoidanceDebugData(const dtObstacleAvoidanceDebugData&) = delete;
+	dtObstacleAvoidanceDebugData& operator=(const dtObstacleAvoidanceDebugData&) = delete;
 
 	int m_nsamples;
 	int m_maxSamples;
@@ -127,8 +127,8 @@ public:
 
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	dtObstacleAvoidanceQuery(const dtObstacleAvoidanceQuery&);
-	dtObstacleAvoidanceQuery& operator=(const dtObstacleAvoidanceQuery&);
+	dtObstacleAvoidanceQuery(const dtObstacleAvoidanceQuery&) = delete;
+	dtObstacleAvoidanceQuery& operator=(const dtObstacleAvoidanceQuery&) = delete;
 
 	void prepare(const float* pos, const float* dvel);
 

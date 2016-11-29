@@ -186,8 +186,8 @@ public:
 
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	rcScopedTimer(const rcScopedTimer&);
-	rcScopedTimer& operator=(const rcScopedTimer&);
+	rcScopedTimer(const rcScopedTimer&) = delete;
+	rcScopedTimer& operator=(const rcScopedTimer&) = delete;
 	
 	rcContext* const m_ctx;
 	const rcTimerLabel m_label;
@@ -308,8 +308,8 @@ struct rcHeightfield
 
 private:
 	// Explicitly-disabled copy constructor and copy assignment operator.
-	rcHeightfield(const rcHeightfield&);
-	rcHeightfield& operator=(const rcHeightfield&);
+	rcHeightfield(const rcHeightfield&) = delete;
+	rcHeightfield& operator=(const rcHeightfield&) = delete;
 };
 
 /// Provides information on the content of a cell column in a compact heightfield. 

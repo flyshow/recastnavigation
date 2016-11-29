@@ -212,8 +212,8 @@ public:
 	void draw(struct duDebugDraw* dd);
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	duDisplayList(const duDisplayList&);
-	duDisplayList& operator=(const duDisplayList&);
+	duDisplayList(const duDisplayList&) = delete;
+	duDisplayList& operator=(const duDisplayList&) = delete;
 };
 
 

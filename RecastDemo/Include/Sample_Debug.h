@@ -55,8 +55,8 @@ public:
 
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	Sample_Debug(const Sample_Debug&);
-	Sample_Debug& operator=(const Sample_Debug&);
+	Sample_Debug(const Sample_Debug&) = delete;
+	Sample_Debug& operator=(const Sample_Debug&) = delete;
 };
 
 

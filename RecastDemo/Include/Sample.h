@@ -165,8 +165,8 @@ public:
 
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	Sample(const Sample&);
-	Sample& operator=(const Sample&);
+	Sample(const Sample&) = delete;
+	Sample& operator=(const Sample&) = delete;
 };
 
 

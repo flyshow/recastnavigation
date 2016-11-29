@@ -509,8 +509,8 @@ public:
 	
 private:
 	// Explicitly disabled copy constructor and copy assignment operator
-	dtNavMeshQuery(const dtNavMeshQuery&);
-	dtNavMeshQuery& operator=(const dtNavMeshQuery&);
+	dtNavMeshQuery(const dtNavMeshQuery&) = delete;
+	dtNavMeshQuery& operator=(const dtNavMeshQuery&) = delete;
 	
 	/// Queries polygons within a tile.
 	void queryPolygonsInTile(const dtMeshTile* tile, const float* qmin, const float* qmax,

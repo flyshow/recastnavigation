@@ -72,8 +72,8 @@ public:
 
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	dtPathQueue(const dtPathQueue&);
-	dtPathQueue& operator=(const dtPathQueue&);
+	dtPathQueue(const dtPathQueue&) = delete;
+	dtPathQueue& operator=(const dtPathQueue&) = delete;
 };
 
 #endif // DETOURPATHQUEUE_H

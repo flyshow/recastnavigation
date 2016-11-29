@@ -91,8 +91,8 @@ public:
 	virtual bool read(void* ptr, const size_t size);
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
-	FileIO(const FileIO&);
-	FileIO& operator=(const FileIO&);
+	FileIO(const FileIO&) = delete;
+	FileIO& operator=(const FileIO&) = delete;
 };
 
 #endif // SAMPLEINTERFACES_H
