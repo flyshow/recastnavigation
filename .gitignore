@@ -13,8 +13,15 @@
 RecastDemo/Bin/RecastDemo
 RecastDemo/Bin/Tests
 
-# Build directory
-RecastDemo/Build
+# Local files in vs2015 build directory
+RecastDemo/Build/vs2015/Debug
+RecastDemo/Build/vs2015/Release
+RecastDemo/Build/vs2015/lib
+RecastDemo/Build/vs2015/obj
+RecastDemo/Build/vs2015/.vs
+RecastDemo/Build/vs2015/*.user
+RecastDemo/Build/vs2015/*.db
+RecastDemo/Build/vs2015/*.sdf
 
 # Ignore meshes
 RecastDemo/Bin/Meshes/*
