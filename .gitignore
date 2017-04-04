@@ -53,3 +53,6 @@ RecastDemo/Contrib/SDL/*
 
 ## Generated doc files
 Docs/html
+
+## emacs backup files
+*.*~
