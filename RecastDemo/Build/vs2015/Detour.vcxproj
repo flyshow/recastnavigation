@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Detour\Source\DetourAlloc.cpp" />
+    <ClCompile Include="..\..\..\Detour\Source\DetourAssert.cpp" />
     <ClCompile Include="..\..\..\Detour\Source\DetourCommon.cpp" />
     <ClCompile Include="..\..\..\Detour\Source\DetourNavMesh.cpp" />
     <ClCompile Include="..\..\..\Detour\Source\DetourNavMeshBuilder.cpp" />

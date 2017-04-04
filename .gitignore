@@ -21,6 +21,7 @@ RecastDemo/Build/vs2015/obj
 RecastDemo/Build/vs2015/.vs
 RecastDemo/Build/vs2015/*.user
 RecastDemo/Build/vs2015/*.db
+RecastDemo/Build/vs2015/*.opendb
 RecastDemo/Build/vs2015/*.sdf
 
 # Ignore meshes
