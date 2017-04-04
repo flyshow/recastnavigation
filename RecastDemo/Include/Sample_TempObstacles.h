@@ -90,6 +90,8 @@ private:
 	// Explicitly disabled copy constructor and copy assignment operator.
 	Sample_TempObstacles(const Sample_TempObstacles&) = delete;
 	Sample_TempObstacles& operator=(const Sample_TempObstacles&) = delete;
+
+	int rasterizeTileLayers(const int tx, const int ty, const rcConfig& cfg, struct TileCacheData* tiles, const int maxTiles);
 };
 
 
