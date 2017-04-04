@@ -45,6 +45,9 @@ Thumbs.db
 ## xcode specific
 *xcuserdata*
 
+## visual studio specific
+*.lastcodeanalysissucceeded
+
 ## SDL contrib
 RecastDemo/Contrib/SDL/*
 
