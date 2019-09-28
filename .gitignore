@@ -65,3 +65,7 @@ DemoConfig~
 *.cpp#
 *.h#
 *.tmp
+
+## IDE files
+.idea/
+cmake-build-*/

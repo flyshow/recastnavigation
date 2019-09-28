@@ -84,6 +84,10 @@ typedef unsigned int   flzuint32;
 #define FASTLZ_UINT8_MAX   0xff
 #define FASTLZ_UINT16_MAX  0Xffff
 #define FASTLZ_UINT32_MAX  0xffffffff
+/* Disable "conversion from A to B, possible loss of data" warning when using MSVC */
+#if defined(_MSC_VER)
+#pragma warning(disable: 4244)
+#endif
 
 /* prototypes */
 int fastlz_compress(const void* input, int length, void* output);
