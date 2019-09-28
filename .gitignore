@@ -23,6 +23,9 @@ RecastDemo/Build/vs2015/*.db
 RecastDemo/Build/vs2015/*.opendb
 RecastDemo/Build/vs2015/*.sdf
 
+# Local files in vs2017 build directory
+RecastDemo/Build/vs2017/
+
 # Ignore meshes
 RecastDemo/Bin/Meshes/*
 
@@ -56,3 +59,9 @@ Docs/html
 
 ## emacs backup files
 *.*~
+DemoConfig~
+
+## emacs temp files
+*.cpp#
+*.h#
+*.tmp
