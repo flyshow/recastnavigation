@@ -19,6 +19,8 @@
 #include <cstdio>
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <cctype>
+#include <cstdlib>
 
 #include "SDL.h"
 #include "SDL_opengl.h"
@@ -28,8 +30,11 @@
 #	include <GL/glu.h>
 #endif
 
+#include <algorithm>
+#include <limits>
 #include <vector>
 #include <string>
+#include <map>
 
 #include "imgui.h"
 #include "imguiRenderGL.h"
@@ -51,6 +56,7 @@
 
 using std::string;
 using std::vector;
+using std::map;
 
 struct SampleItem
 {
@@ -69,8 +75,138 @@ static SampleItem g_samples[] =
 };
 static const int g_nsamples = sizeof(g_samples) / sizeof(SampleItem);
 
+static map<string, int> g_configTable = {
+    { "SDL_GL_RED_SIZE", 8 },
+    { "SDL_GL_GREEN_SIZE", 8 },
+    { "SDL_GL_BLUE_SIZE", 8 },
+    { "SDL_GL_ALPHA_SIZE", 8 },
+    { "SDL_GL_DOUBLEBUFFER", 1 },
+    { "SDL_GL_DEPTH_SIZE", 24 },
+    { "SDL_GL_MULTISAMPLEBUFFERS", 1 },
+    { "SDL_GL_MULTISAMPLESAMPLES", 4 },
+	{ "SDL_CONTROLLER_DEADZONE", 5000 },
+	{ "SDL_CONTROLLER_MOVESPEED_MULTIPLIER_BASE", 2 },
+    { "DEMO_PRESENTATION_MODE", 0 },
+    { "DEMO_WINDOW_BORDERLESS", 0 },
+    { "DEMO_WINDOW_WIDTH", 1920 },
+    { "DEMO_WINDOW_HEIGHT", 1080 }
+};
+void initDemoConfig(const char* configPath)
+{
+    FILE* fp = fopen(configPath, "rb");
+    if (fp)
+    {
+        if (fseek(fp, 0, SEEK_END) != 0)
+        {
+            fclose(fp);
+            return;
+        }
+        long size = ftell(fp);
+        if (size < 0)
+        {
+            fclose(fp);
+            return;
+        }
+        if (fseek(fp, 0, SEEK_SET) != 0)
+        {
+            fclose(fp);
+            return;
+        }
+
+        char* configBuffer = (char*)malloc(size);
+        if (!configBuffer)
+        {
+            fclose(fp);
+            return;
+        }
+
+        size_t readLen = fread(configBuffer, 1, size, fp);
+        fclose(fp);
+        fp = 0;
+
+        if (readLen != static_cast<size_t>(size))
+        {
+            free(configBuffer);
+            return;
+        }
+
+        for (char* cur = configBuffer; cur < configBuffer + readLen;)
+        {
+            // prefix trim
+            while (isspace(*cur) && cur < configBuffer + readLen)
+            {
+                ++cur;
+            }
+            if (cur >= configBuffer + readLen)
+            {
+                break;
+            }
+            char* entryStart = cur;
+
+            // parse config item
+            while (cur < configBuffer + readLen && *cur != '=' && !isspace(*cur))
+            {
+                ++cur;
+            }
+            if (cur >= configBuffer + readLen)
+            {
+                break;
+            }
+            if (isspace(*cur))
+            {
+                continue;
+            }
+            char* entryEnd = cur;
+
+            string itemName(entryStart, entryEnd);
+
+            // parse assignment
+            while (cur < configBuffer + readLen && *cur != '=' && !isspace(*cur))
+            {
+                ++cur;
+            }
+            if (cur >= configBuffer + readLen)
+            {
+                break;
+            }
+            if (isspace(*cur))
+            {
+                continue;
+            }
+            while (cur < configBuffer + readLen && !isdigit(*cur))
+            {
+                ++cur;
+            }
+            if (cur >= configBuffer + readLen)
+            {
+                break;
+            }
+
+            // parse value
+            entryStart = cur;
+            while (cur < configBuffer + readLen && isdigit(*cur))
+            {
+                ++cur;
+            }
+            entryEnd = cur;
+            string itemValueStr(entryStart, entryEnd);
+            int itemValue = atoi(itemValueStr.c_str());
+
+            if (g_configTable.find(itemName) != g_configTable.end())
+            {
+                g_configTable[itemName] = itemValue;
+            }
+        }
+
+        free(configBuffer);
+    }
+}
+
 int main(int /*argc*/, char** /*argv*/)
 {
+    // Load config file (optional)
+    initDemoConfig("DemoConfig");
+
 	// Init SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
@@ -79,23 +215,23 @@ int main(int /*argc*/, char** /*argv*/)
 	}
 
 	// Enable depth buffer.
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, g_configTable["SDL_GL_DOUBLEBUFFER"]);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, g_configTable["SDL_GL_DEPTH_SIZE"]);
 	
 	// Set color channel depth.
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, g_configTable["SDL_GL_RED_SIZE"]);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, g_configTable["SDL_GL_GREEN_SIZE"]);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, g_configTable["SDL_GL_BLUE_SIZE"]);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, g_configTable["SDL_GL_ALPHA_SIZE"]);
 	
 	// 4x MSAA.
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, g_configTable["SDL_GL_MULTISAMPLEBUFFERS"]);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, g_configTable["SDL_GL_MULTISAMPLESAMPLES"]);
 
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 
-	bool presentationMode = false;
+	const bool presentationMode = g_configTable["DEMO_PRESENTATION_MODE"] > 0;
 	Uint32 flags = SDL_WINDOW_OPENGL;
 	int width;
 	int height;
@@ -104,13 +240,13 @@ int main(int /*argc*/, char** /*argv*/)
 		// Create a fullscreen window at the native resolution.
 		width = displayMode.w;
 		height = displayMode.h;
-		flags |= SDL_WINDOW_FULLSCREEN;
+		flags |= (g_configTable["DEMO_WINDOW_BORDERLESS"] > 0 ? SDL_WINDOW_BORDERLESS : SDL_WINDOW_FULLSCREEN);
 	}
 	else
 	{
 		float aspect = 16.0f / 9.0f;
-		width = rcMin(displayMode.w, (int)(displayMode.h * aspect)) - 80;
-		height = displayMode.h - 80;
+		width = rcMin(rcMin(displayMode.w - 80, g_configTable["DEMO_WINDOW_WIDTH"]), (int)(rcMin(displayMode.h, g_configTable["DEMO_WINDOW_HEIGHT"]) * aspect) - 80);
+		height = rcMin(displayMode.h - 80, g_configTable["DEMO_WINDOW_HEIGHT"]);
 	}
 	
 	SDL_Window* window;
@@ -145,6 +281,7 @@ int main(int /*argc*/, char** /*argv*/)
 	float origCameraEulers[] = {0, 0}; // Used to compute rotational changes across frames.
 	
 	float moveFront = 0.0f, moveBack = 0.0f, moveLeft = 0.0f, moveRight = 0.0f, moveUp = 0.0f, moveDown = 0.0f;
+	bool backButtonPressed = false;
 	
 	float scrollZoom = 0;
 	bool rotate = false;
@@ -192,6 +329,24 @@ int main(int /*argc*/, char** /*argv*/)
 	
 	glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LEQUAL);
+
+	// Game controller
+	SDL_GameController* gameController = nullptr;
+	SDL_GameControllerEventState(SDL_ENABLE);
+	for (int i = 0; i < SDL_NumJoysticks(); ++i) 
+	{
+		if (SDL_IsGameController(i)) 
+		{
+			if (gameController = SDL_GameControllerOpen(i))
+			{
+				break;
+			}
+			else 
+			{
+				printf("Could not open gamecontroller %i: %s\n", i, SDL_GetError());
+			}
+		}
+	}
 	
 	bool done = false;
 	while(!done)
@@ -333,7 +488,7 @@ int main(int /*argc*/, char** /*argv*/)
 						}
 					}
 					break;
-					
+
 				case SDL_QUIT:
 					done = true;
 					break;
@@ -413,6 +568,23 @@ int main(int /*argc*/, char** /*argv*/)
 			if (ms > 10) ms = 10;
 			if (ms >= 0) SDL_Delay(ms);
 		}
+
+		// Handle controller rotation
+		if (gameController)
+		{
+			auto rightAxisX = SDL_GameControllerGetAxis(gameController, SDL_CONTROLLER_AXIS_RIGHTX);
+			auto rightAxisY = SDL_GameControllerGetAxis(gameController, SDL_CONTROLLER_AXIS_RIGHTY);
+
+			static const auto controllerDeadzone = static_cast<decltype(rightAxisX)>(std::max(0, g_configTable["SDL_CONTROLLER_DEADZONE"]));
+
+			float dx = rightAxisX > controllerDeadzone || rightAxisX < -controllerDeadzone 
+				? static_cast<float>(rightAxisX) / static_cast<float>(std::numeric_limits<decltype(rightAxisX)>::max()) : 0.f;
+			float dy = rightAxisY > controllerDeadzone || rightAxisY < -controllerDeadzone
+				? static_cast<float>(rightAxisY) / static_cast<float>(std::numeric_limits<decltype(rightAxisY)>::max()) : 0.f;
+
+			cameraEulers[0] += dy;
+			cameraEulers[1] += dx;
+		}
 		
 		// Set the viewport.
 		glViewport(0, 0, width, height);
@@ -467,6 +639,82 @@ int main(int /*argc*/, char** /*argv*/)
 		if (SDL_GetModState() & KMOD_SHIFT)
 		{
 			keybSpeed *= 4.0f;
+		}
+
+		if (gameController)
+		{
+			// Handle controller movement
+			auto leftAxisX = SDL_GameControllerGetAxis(gameController, SDL_CONTROLLER_AXIS_LEFTX);
+			auto leftAxisY = SDL_GameControllerGetAxis(gameController, SDL_CONTROLLER_AXIS_LEFTY);
+			auto leftTriggerLevel = SDL_GameControllerGetAxis(gameController, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+			auto rightTriggerLevel = SDL_GameControllerGetAxis(gameController, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
+
+			static const auto controllerDeadzone = static_cast<decltype(leftAxisX)>(std::max(0, g_configTable["SDL_CONTROLLER_DEADZONE"]));
+			static auto controllerSpeed = static_cast<float>(g_configTable["SDL_CONTROLLER_MOVESPEED_MULTIPLIER_BASE"]);
+
+			// move speed
+			if (SDL_GameControllerGetButton(gameController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER))
+			{
+				controllerSpeed += 0.1f;
+			}
+			if (SDL_GameControllerGetButton(gameController, SDL_CONTROLLER_BUTTON_LEFTSHOULDER))
+			{
+				controllerSpeed = std::max(controllerSpeed - 0.1f, 0.1f);
+			}
+
+			// move right
+			if (leftAxisX > controllerDeadzone)
+			{
+				moveRight = rcClamp(moveRight + dt * 4.f * static_cast<float>(leftAxisX - controllerDeadzone) / static_cast<float>(std::numeric_limits<decltype(leftAxisX)>::max() - controllerDeadzone), 0.f, 1.f);
+				moveRight *= controllerSpeed;
+			}
+			// move left
+			else if (leftAxisX < -controllerDeadzone)
+			{
+				moveLeft = rcClamp(moveLeft + dt * 4.f * static_cast<float>(controllerDeadzone - leftAxisX) / static_cast<float>(controllerDeadzone - std::numeric_limits<decltype(leftAxisX)>::min()), 0.f, 1.f);
+				moveLeft *= controllerSpeed;
+			}
+			// move back
+			if (leftAxisY > controllerDeadzone)
+			{
+				moveBack = rcClamp(moveBack + dt * 4.f * static_cast<float>(leftAxisY - controllerDeadzone) / static_cast<float>(std::numeric_limits<decltype(leftAxisY)>::max() - controllerDeadzone), 0.f, 1.f);
+				moveBack *= controllerSpeed;
+			}
+			// move fron
+			else if (leftAxisY < -controllerDeadzone)
+			{
+				moveFront = rcClamp(moveFront + dt * 4.f * static_cast<float>(controllerDeadzone - leftAxisY) / static_cast<float>(controllerDeadzone - std::numeric_limits<decltype(leftAxisY)>::min()), 0.f, 1.f);
+				moveFront *= controllerSpeed;
+			}
+			// move up
+			if (rightTriggerLevel > controllerDeadzone)
+			{
+				moveUp = rcClamp(moveUp + dt * 4.f * static_cast<float>(rightTriggerLevel - controllerDeadzone) / static_cast<float>(std::numeric_limits<decltype(rightTriggerLevel)>::max() - controllerDeadzone), 0.f, 1.f);
+				moveUp *= controllerSpeed;
+			}
+			// move down
+			if (leftTriggerLevel > controllerDeadzone)
+			{
+				moveDown = rcClamp(moveDown + dt * 4.f * static_cast<float>(leftTriggerLevel - controllerDeadzone) / static_cast<float>(std::numeric_limits<decltype(leftTriggerLevel)>::max() - controllerDeadzone), 0.f, 1.f);
+				moveDown *= controllerSpeed;
+			}
+
+			// Handle controller input
+			if (SDL_GameControllerGetButton(gameController, SDL_CONTROLLER_BUTTON_BACK))
+			{
+				if (!backButtonPressed)
+				{
+					backButtonPressed = true;
+				}
+			}
+			else
+			{
+				if (backButtonPressed)
+				{
+					showMenu = !showMenu;
+				}
+				backButtonPressed = false;
+			}
 		}
 		
 		float movex = (moveRight - moveLeft) * keybSpeed * dt;
