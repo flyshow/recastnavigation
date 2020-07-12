@@ -13,7 +13,10 @@ set_target_properties(DetourTileCache PROPERTIES
         SOVERSION ${SOVERSION}
         VERSION ${VERSION}
         )
+target_compile_features(DetourTileCache PUBLIC cxx_std_17)
 
+add_dependencies(DetourTileCache Detour)
+target_link_libraries(DetourTileCache Detour)
 
 install(TARGETS DetourTileCache
         ARCHIVE DESTINATION lib

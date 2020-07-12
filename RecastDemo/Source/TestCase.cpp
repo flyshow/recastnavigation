@@ -27,7 +27,12 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
 #ifdef __APPLE__
+#	include "Availability.h"
+#	if __MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_9
+#	include <GLKit/GLKMathUtils.h>
+#	else
 #	include <OpenGL/glu.h>
+#	endif
 #else
 #	include <GL/glu.h>
 #endif
@@ -416,8 +421,36 @@ bool TestCase::handleRenderOverlay(double* proj, double* model, int* view)
 			pt[1]+=0.5f;
 		}
 		
+#ifdef __APPLE__
+#	if __MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_9
+		{
+			GLKVector3 pos;
+			pos.x = pt[0];
+			pos.y = pt[1];
+			pos.z = pt[2];
+			GLKMatrix4 modelMat;
+			for (size_t i = 0; i < 16; ++i)
+			{
+				modelMat.m[i] = model[i];
+			}
+			GLKMatrix4 projMat;
+			for (size_t i = 0; i < 16; ++i)
+			{
+				projMat.m[i] = proj[i];
+			}
+			GLKVector3 projectedPos = GLKMathProject(pos, modelMat, projMat, view);
+			x = projectedPos.x;
+			y = projectedPos.y;
+			z = projectedPos.z;
+		}
+#	else
 		if (gluProject((GLdouble)pt[0], (GLdouble)pt[1], (GLdouble)pt[2],
 					   model, proj, view, &x, &y, &z))
+#	endif
+#else
+		if (gluProject((GLdouble)pt[0], (GLdouble)pt[1], (GLdouble)pt[2],
+					   model, proj, view, &x, &y, &z))
+#endif
 		{
 			snprintf(text, 64, "Path %d\n", n);
 			unsigned int col = imguiRGBA(0,0,0,128);

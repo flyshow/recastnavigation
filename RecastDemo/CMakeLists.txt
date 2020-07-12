@@ -21,7 +21,16 @@ file(COPY Bin/Meshes DESTINATION ${CMAKE_BINARY_DIR}/RecastDemo)
 file(COPY Bin/TestCases DESTINATION ${CMAKE_BINARY_DIR}/RecastDemo)
 file(COPY Bin/DroidSans.ttf DESTINATION ${CMAKE_BINARY_DIR}/RecastDemo)
 
+# use GLKit framework on mac os
+if(APPLE)
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        set(GLKIT_LIBRARY "-framework GLKit")
+    endif()
+endif()
+
 add_dependencies(RecastDemo DebugUtils Detour DetourCrowd DetourTileCache Recast)
-target_link_libraries(RecastDemo ${OPENGL_LIBRARIES} ${SDL2_LIBRARY} DebugUtils Detour DetourCrowd DetourTileCache Recast)
+target_link_libraries(RecastDemo ${OPENGL_LIBRARIES} ${GLKIT_LIBRARY} ${SDL2_LIBRARY} DebugUtils Detour DetourCrowd DetourTileCache Recast)
+
+target_compile_features(RecastDemo PUBLIC cxx_std_17)
 
 install(TARGETS RecastDemo RUNTIME DESTINATION bin)

@@ -13,14 +13,10 @@
 RecastDemo/Bin/RecastDemo
 RecastDemo/Bin/Tests
 
-# Local files in vs2015 build directory
-RecastDemo/Build/vs2015/
-
-# Local files in vs2017 build directory
-RecastDemo/Build/vs2017/
-
-# Local files in vs2019 build directory
-RecastDemo/Build/vs2019/
+# Local build files
+RecastDemo/Build/
+build/
+.vscode/
 
 # Ignore meshes
 RecastDemo/Bin/Meshes/*

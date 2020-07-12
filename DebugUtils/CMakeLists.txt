@@ -15,6 +15,10 @@ set_target_properties(DebugUtils PROPERTIES
         SOVERSION ${SOVERSION}
         VERSION ${VERSION}
         )
+target_compile_features(DebugUtils PUBLIC cxx_std_17)
+
+add_dependencies(DebugUtils Recast Detour)
+target_link_libraries(DebugUtils Recast Detour)
 
 install(TARGETS DebugUtils
         ARCHIVE DESTINATION lib

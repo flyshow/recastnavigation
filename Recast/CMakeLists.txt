@@ -12,6 +12,7 @@ set_target_properties(Recast PROPERTIES
         SOVERSION ${SOVERSION}
         VERSION ${VERSION}
         )
+target_compile_features(Recast PUBLIC cxx_std_17)
 
 install(TARGETS Recast
         ARCHIVE DESTINATION lib

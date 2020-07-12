@@ -12,6 +12,7 @@ set_target_properties(Detour PROPERTIES
         SOVERSION ${SOVERSION}
         VERSION ${VERSION}
         )
+target_compile_features(Detour PUBLIC cxx_std_17)
 
 install(TARGETS Detour
         ARCHIVE DESTINATION lib

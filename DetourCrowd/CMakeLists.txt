@@ -13,6 +13,10 @@ set_target_properties(DetourCrowd PROPERTIES
         SOVERSION ${SOVERSION}
         VERSION ${VERSION}
         )
+target_compile_features(DetourCrowd PUBLIC cxx_std_17)
+
+add_dependencies(DetourCrowd Detour)
+target_link_libraries(DetourCrowd Detour)
 
 install(TARGETS DetourCrowd
         ARCHIVE DESTINATION lib

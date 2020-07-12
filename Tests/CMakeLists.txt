@@ -7,4 +7,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(Tests ${TESTS_SOURCES})
 add_dependencies(Tests Recast Detour)
 target_link_libraries(Tests Recast Detour)
+target_compile_features(Tests PUBLIC cxx_std_17)
+
 add_test(Tests Tests)
